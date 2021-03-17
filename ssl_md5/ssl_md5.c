@@ -15,7 +15,6 @@ size_t ft_strlen(char *str){
     return (size_t)(s - str);
 }
 
-
 void encrypt_md5(char *str) {
 
     /* precomputed tables of sinus values */
@@ -42,11 +41,24 @@ void encrypt_md5(char *str) {
     const int c0 = 0x98badcfe;   // C
     const int d0 = 0x10325476;   // D
 
-    size_t message_len = ft_strlen(str) * 8;
-    uint16_t blockNb = 1 + (message_len / 512);
-    blockNb += (message_len % 512 >= 448) ? 1 : 0;
-    uint16_t lastBlockLength = message_len % 512;
-    printf("[%s] : msg_len = %d, LastBlockLenght = %d, There will be %d block \n",str,lastBlockLength,message_len, blockNb);
+    size_t messageLen = ft_strlen(str);
+    /*Message should be 64 bits (8 bytes) fewer than a multiple of 512 bits (64 bytes)*/
+    uint16_t blockNb = ((messageLen + 8) / 64) + 1;
+    /*Total Length in byte*/
+    uint16_t totalLength = blockNb * 64;
+    uint16_t Paddingsize = totalLength - messageLen;
+    printf("[%s] : totalLength = %d, PaddingSize = %d, There will be %d block \n",str,totalLength,Paddingsize, blockNb);
+
+    /*Get padding array*/
+    char *padding;
+    if((padding = (char*)malloc(Paddingsize * sizeof(char))) != NULL){
+        printf("Error while assigning padding array\n");
+        return 0;
+    }
+    padding[0] = 0x80; /* must be a '1' bit right after the message*/
+
+    size_t messageLenbits = messageLen * 8;
+
 
 
 }
